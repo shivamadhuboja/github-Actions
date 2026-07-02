@@ -24,13 +24,13 @@ jobs:
       # 3. Install Maven if missing
       - name: Ensure Maven is installed
         run: |
-          if ! command -v mvn &> /dev/null: then
-            echo "Maven not found. Installing..."
-            sudo dnf install -y maven
+          if ! command -v mvn &> /dev/null; then
+           echo "Maven not found. Installing..."
+           sudo dnf install -y maven
           else
-            echo "Maven is already installed"
+           echo "Maven is already installed"
           fi
-          mvn -version
+           mvn -version
        
       # 4. Cache Maven dependencies
       - name: Cache Maven dependencies
