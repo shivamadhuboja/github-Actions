@@ -2,7 +2,7 @@ name: Java CI/CD Pipeline to Tomcat
 
 on:
   push:
-    branch: [ main ] # Trigger on push to main branch
+     branches: [ main ] # Trigger on push to main branch
 
 jobs:
   build:
@@ -24,23 +24,29 @@ jobs:
       - name: Build with Maven
         run: mvn clean package - DskipTests
      
-      # 4. upload war as artificat (optional, for later jobs)
+      # 4. upload war as an artifact (optional, for later jobs)
       - name: Upload WAR artifact
         uses: actions/upload-artifact@v4
         with:
           name: myapp
           path: target/*.war
 
-deploy:
-  runs-on: ubuntu-latest
-  needs: build
-  environment: production
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: production
 
-  # steps:
-  #  # 5. download war artifact
-  #  - name: Deploy to Tomcat
-  #    run:
-  #     WAR_FILE=$(Is *.war)
-  #     echo "Deploying @WAE_FILE to Tomcat..."
-  #     curl -v --upload-file "$WAR_FILE" \
-  #       "http://${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }}@${{ secrets.TOMCAT_HOST }}/manager/text/deploy?path=/myapp&update=true"
+    # steps:
+    #   # 5. download war artifact
+    #   - name: Deploy to Tomcat
+    #     run:
+    #       WAR_FILE=$(Is *.war)
+    #       echo "Deploying @WAE_FILE to Tomcat..."
+    #       curl -v --upload-file "$WAR_FILE" \
+    #       "http://${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }}@${{ secrets.TOMCAT_HOST }}/manager/text/deploy?path=/myapp&update=true"
+
+    #   # 9. Optional: verify deployment
+    #   - name: Verify deployment
+    #     run: |
+    #       curl -I http://${{ secrets.TOMCAT_HOST }}/myapp
+      
