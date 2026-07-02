@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
 
     steps:
       # 1. Checkout code
@@ -21,11 +21,32 @@ jobs:
           distribution: temurin
           java-version: '21'
 
-      # 3. Build with Maven
-      - name: Build with Maven
+      # 3. Install Maven if missing
+      - name: Ensure Maven is installed
+        run: |
+          if ! command -v mvn &> /dev/null: then
+            echo "Maven not found. Installing..."
+            sudo dnf install -y maven
+          else
+            echo "Maven is already installed"
+          fi
+          mvn -version
+       
+      # 4. Cache Maven dependencies
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path:
+            ~/.m2/respository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys:
+            ${{ runner.os }}-maven-
+
+      # 5. Build with maven
+      - name: Build with maven
         run: mvn clean package -DskipTests
 
-      # 4. Upload WAR as an artifact
+      # 6. Upload WAR as an artifact
       - name: Upload WAR artifact
         uses: actions/upload-artifact@v4
         with:
@@ -33,7 +54,7 @@ jobs:
           path: target/*.war
 
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, Linux]
     needs: build
     environment: production
 
