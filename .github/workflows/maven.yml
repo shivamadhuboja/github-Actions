@@ -37,20 +37,20 @@ jobs:
     needs: build
     environment: production
 
-    # steps:
-    #   # 5. Download WAR artifact
-    #   - name: Download WAR artifact
-    #     uses: actions/download-artifact@v4
-    #     with:
-    #       name: myapp
-    #       path: target
+    steps:
+      # 5. Download WAR artifact
+      - name: Download WAR artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: myapp
+          path: target
 
-    #   # 6. Deploy to Tomcat
-    #   - name: Deploy to Tomcat
-    #     run: |
-    #       WAR_FILE=$(ls target/*.war)
-    #       echo "Deploying $WAR_FILE to Tomcat..."
+      # 6. Deploy to Tomcat
+      - name: Deploy to Tomcat
+        run: |
+          WAR_FILE=$(ls target/*.war)
+          echo "Deploying $WAR_FILE to Tomcat..."
 
-    #       curl -v --upload-file "$WAR_FILE" \
-    #         --user "${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }}" \
+          curl -v --upload-file "$WAR_FILE" \
+            --user "${{ secrets.TOMCAT_USER }}:${{ secrets.TOMCAT_PASSWORD }}" \
             "http://${{ secrets.TOMCAT_HOST }}/manager/text/deploy?path=/myapp&update=true"
